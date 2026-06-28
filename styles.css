@@ -542,13 +542,8 @@ h1 {
 }
 
 .sun-dot {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 0 18px rgba(255, 255, 255, 0.86), 0 0 34px rgba(255, 228, 128, 0.36);
-  transform: translate(-50%, -50%);
+  fill: #ffffff;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.92)) drop-shadow(0 0 22px rgba(255, 228, 128, 0.36));
 }
 
 .sun-alt-time {

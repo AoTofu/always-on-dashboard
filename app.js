@@ -318,10 +318,10 @@ function renderSunProgress(sunrise, sunset) {
   els.sunAltTime.textContent = isDaytime
     ? `Sunrise: ${formatters.shortTime.format(sunrise)}`
     : `Sunset: ${formatters.shortTime.format(sunset)}`;
-  const dotProgress = now < sunrise ? 0 : progress;
+  const dotProgress = sunPathProgress(now, sunrise, sunset, progress);
   const dot = sunArcPoint(dotProgress);
-  els.sunDot.style.left = `${dot.left}%`;
-  els.sunDot.style.top = `${dot.top}%`;
+  els.sunDot.setAttribute("cx", dot.x);
+  els.sunDot.setAttribute("cy", dot.y);
   els.sunLength.textContent = `${hours}h ${String(minutes).padStart(2, "0")}m`;
 }
 
@@ -329,6 +329,64 @@ function updateSunCard() {
   if (sunTimes.sunrise && sunTimes.sunset) {
     renderSunProgress(sunTimes.sunrise, sunTimes.sunset);
   }
+}
+
+function sunPathProgress(now, sunrise, sunset, daylightProgress) {
+  const sunrisePathProgress = sunHorizonPathProgress("rise");
+  const sunsetPathProgress = sunHorizonPathProgress("set");
+
+  if (now >= sunrise && now <= sunset) {
+    return lerp(sunrisePathProgress, sunsetPathProgress, clamp(daylightProgress, 0, 100) / 100);
+  }
+
+  if (now < sunrise) {
+    const preDawnStart = sunrise.getTime() - 2 * 60 * 60 * 1000;
+    const preDawnProgress = clamp((now.getTime() - preDawnStart) / (sunrise.getTime() - preDawnStart), 0, 1);
+    return lerp(0, sunrisePathProgress, preDawnProgress);
+  }
+
+  const postSunsetEnd = sunset.getTime() + 2 * 60 * 60 * 1000;
+  const postSunsetProgress = clamp((now.getTime() - sunset.getTime()) / (postSunsetEnd - sunset.getTime()), 0, 1);
+  return lerp(sunsetPathProgress, 100, postSunsetProgress);
+}
+
+function sunHorizonPathProgress(kind) {
+  const horizonY = 68;
+  const t = kind === "rise"
+    ? findCubicTForY([
+        { x: 18, y: 94 },
+        { x: 70, y: 88 },
+        { x: 92, y: 34 },
+        { x: 150, y: 28 }
+      ], horizonY)
+    : findCubicTForY([
+        { x: 150, y: 28 },
+        { x: 211, y: 23 },
+        { x: 238, y: 77 },
+        { x: 302, y: 88 }
+      ], horizonY);
+
+  return kind === "rise" ? t * 50 : 50 + t * 50;
+}
+
+function findCubicTForY(points, targetY) {
+  let low = 0;
+  let high = 1;
+  const startsAboveTarget = points[0].y < targetY;
+
+  for (let i = 0; i < 24; i += 1) {
+    const mid = (low + high) / 2;
+    const y = cubicBezierPoint(points, mid).y;
+    const isAboveTarget = y < targetY;
+
+    if (isAboveTarget === startsAboveTarget) {
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+
+  return (low + high) / 2;
 }
 
 function sunArcPoint(progress) {
@@ -351,8 +409,8 @@ function sunArcPoint(progress) {
   const point = cubicBezierPoint(points, t);
 
   return {
-    left: (point.x / 320) * 100,
-    top: (point.y / 116) * 100
+    x: String(point.x),
+    y: String(point.y)
   };
 }
 
@@ -367,6 +425,10 @@ function cubicBezierPoint(points, t) {
     x: a * points[0].x + b * points[1].x + c * points[2].x + d * points[3].x,
     y: a * points[0].y + b * points[1].y + c * points[2].y + d * points[3].y
   };
+}
+
+function lerp(start, end, amount) {
+  return start + (end - start) * amount;
 }
 
 function weatherIcon(code) {
