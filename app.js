@@ -312,16 +312,16 @@ function renderSunProgress(sunrise, sunset) {
   const hours = Math.floor(daylightMinutes / 60);
   const minutes = daylightMinutes % 60;
 
-  const isBeforeSunrise = now < sunrise;
   const isDaytime = now >= sunrise && now < sunset;
   els.sunEventLabel.textContent = isDaytime ? "Sunset" : "Sunrise";
   els.sunEventTime.textContent = formatters.shortTime.format(isDaytime ? sunset : sunrise);
   els.sunAltTime.textContent = isDaytime
     ? `Sunrise: ${formatters.shortTime.format(sunrise)}`
     : `Sunset: ${formatters.shortTime.format(sunset)}`;
-  const dotProgress = isBeforeSunrise ? 4 : progress;
-  els.sunDot.style.left = `${clamp(dotProgress, 5, 95)}%`;
-  els.sunDot.style.top = `${sunArcY(dotProgress)}%`;
+  const dotProgress = now < sunrise ? 0 : progress;
+  const dot = sunArcPoint(dotProgress);
+  els.sunDot.style.left = `${dot.left}%`;
+  els.sunDot.style.top = `${dot.top}%`;
   els.sunLength.textContent = `${hours}h ${String(minutes).padStart(2, "0")}m`;
 }
 
@@ -331,9 +331,42 @@ function updateSunCard() {
   }
 }
 
-function sunArcY(progress) {
+function sunArcPoint(progress) {
   const normalized = clamp(progress, 0, 100) / 100;
-  return clamp(68 - Math.sin(normalized * Math.PI) * 42, 26, 72);
+  const firstHalf = normalized <= 0.5;
+  const t = firstHalf ? normalized * 2 : (normalized - 0.5) * 2;
+  const points = firstHalf
+    ? [
+        { x: 18, y: 94 },
+        { x: 70, y: 88 },
+        { x: 92, y: 34 },
+        { x: 150, y: 28 }
+      ]
+    : [
+        { x: 150, y: 28 },
+        { x: 211, y: 23 },
+        { x: 238, y: 77 },
+        { x: 302, y: 88 }
+      ];
+  const point = cubicBezierPoint(points, t);
+
+  return {
+    left: (point.x / 320) * 100,
+    top: (point.y / 116) * 100
+  };
+}
+
+function cubicBezierPoint(points, t) {
+  const inverse = 1 - t;
+  const a = inverse ** 3;
+  const b = 3 * inverse ** 2 * t;
+  const c = 3 * inverse * t ** 2;
+  const d = t ** 3;
+
+  return {
+    x: a * points[0].x + b * points[1].x + c * points[2].x + d * points[3].x,
+    y: a * points[0].y + b * points[1].y + c * points[2].y + d * points[3].y
+  };
 }
 
 function weatherIcon(code) {
