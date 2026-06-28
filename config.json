@@ -1,0 +1,37 @@
+{
+  "location": {
+    "label": "Tokyo",
+    "latitude": 35.6762,
+    "longitude": 139.6503,
+    "timezone": "Asia/Tokyo"
+  },
+  "weather": {
+    "refreshMinutes": 30
+  },
+  "markets": {
+    "refreshMinutes": 5,
+    "symbols": [
+      {
+        "symbol": "^N225",
+        "label": "Nikkei 225"
+      },
+      {
+        "symbol": "7203.T",
+        "label": "Toyota"
+      },
+      {
+        "symbol": "6758.T",
+        "label": "Sony"
+      },
+      {
+        "symbol": "AAPL",
+        "label": "Apple"
+      }
+    ]
+  },
+  "news": {
+    "refreshMinutes": 20,
+    "limit": 5,
+    "rssUrl": "https://news.google.com/rss?hl=ja&gl=JP&ceid=JP:ja"
+  }
+}

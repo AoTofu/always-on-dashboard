@@ -1,0 +1,12 @@
+{
+  "name": "always-on-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Low-power always-on browser dashboard for weather, markets, sunrise, sunset, and news.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

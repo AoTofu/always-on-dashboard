@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Always-On Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <div>
+            <p class="eyebrow">Ambient Board</p>
+          </div>
+        </div>
+        <div class="top-chips" aria-label="状態">
+          <span class="chip"><span class="chip-dot online" id="networkDot"></span><span id="networkStatus">Online</span></span>
+          <span class="chip" id="powerChip">Power --</span>
+          <span class="chip" id="lastSync">Sync --:--</span>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <section class="clock-zone panel" aria-label="時計">
+          <div class="clock-copy">
+            <p id="dateLine" class="date-line">----.--.--</p>
+            <p id="digitalTime" class="digital-time">--:--:--</p>
+          </div>
+
+          <div class="analog-clock" id="analogClock" aria-hidden="true">
+            <div class="clock-halo"></div>
+            <div class="clock-face" id="clockFace">
+              <div class="hand hour-hand"></div>
+              <div class="hand minute-hand"></div>
+              <div class="hand second-hand"></div>
+              <div class="clock-pin"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="info-stack" aria-label="ライブ情報">
+          <article class="panel weather-panel">
+            <div class="panel-head">
+              <div class="weather-title">
+                <span class="section-kicker blue">Weather</span>
+                <span class="weather-location" id="weatherLocation">地域確認中</span>
+              </div>
+              <span class="tiny-status" id="weatherUpdated">--</span>
+            </div>
+            <div class="weather-main">
+              <div>
+                <p class="weather-temp" id="weatherTemp">--°</p>
+                <p class="weather-condition" id="weatherCondition">読み込み中</p>
+              </div>
+              <div class="weather-stats">
+                <span id="weatherRange">H -- / L --</span>
+                <span id="weatherFeels">体感 --°</span>
+                <span id="weatherWind">風 -- m/s</span>
+              </div>
+            </div>
+            <div class="forecast-list" id="forecastList">
+              <div class="empty-line">週間予報を読み込み中</div>
+            </div>
+          </article>
+
+          <article class="panel sun-panel">
+            <div class="sun-card-head">
+              <span class="sun-event-label" id="sunEventLabel">Sunset</span>
+              <span class="tiny-status sun-length" id="sunLength">--h --m</span>
+            </div>
+            <p class="sun-event-time" id="sunEventTime">--:--</p>
+            <div class="sun-arc" aria-hidden="true">
+              <svg viewBox="0 0 320 116" role="img">
+                <path class="sun-horizon" d="M0 68H320"></path>
+                <path class="sun-shadow" d="M0 94 C60 88 82 34 150 28 C211 23 234 77 320 88"></path>
+                <path class="sun-curve" d="M0 94 C60 88 82 34 150 28 C211 23 234 77 320 88"></path>
+              </svg>
+              <span class="sun-dot" id="sunDot"></span>
+            </div>
+            <p class="sun-alt-time" id="sunAltTime">Sunrise: --:--</p>
+          </article>
+
+          <article class="panel markets-panel">
+            <div class="panel-head">
+              <span class="section-kicker green">Markets</span>
+              <span class="tiny-status" id="marketsUpdated">--</span>
+            </div>
+            <div class="market-list" id="marketList">
+              <div class="empty-line">読み込み中</div>
+            </div>
+          </article>
+        </section>
+
+        <aside class="side-rail panel" aria-label="ステータス">
+          <div class="rail-title">Status</div>
+          <div class="rail-meter">
+            <span>Day</span>
+            <div class="rail-track"><i id="dayMeter"></i></div>
+            <strong id="dayPercent">--%</strong>
+          </div>
+          <div class="rail-meter">
+            <span>Week</span>
+            <div class="rail-track"><i id="weekMeter"></i></div>
+            <strong id="weekPercent">--%</strong>
+          </div>
+          <div class="rail-meter">
+            <span>Battery</span>
+            <div class="rail-track"><i id="batteryMeter"></i></div>
+            <strong id="batteryPercent">--</strong>
+          </div>
+        </aside>
+
+        <section class="news-panel panel" aria-label="ニュース">
+          <div class="panel-head">
+            <span class="section-kicker pink">News</span>
+            <span class="tiny-status" id="newsUpdated">--</span>
+          </div>
+          <div class="news-list" id="newsList">
+            <div class="empty-line">読み込み中</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>
